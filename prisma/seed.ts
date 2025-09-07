@@ -1,5 +1,5 @@
-import { PrismaClient } from "@prisma/client";
-const prisma = new PrismaClient();
+import PrismaClient from "@prisma/client";
+const prisma = new PrismaClient.PrismaClient();
 
 async function main() {
   console.log("🌱 Seeding database...");
