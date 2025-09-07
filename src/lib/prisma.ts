@@ -9,3 +9,4 @@ export const prisma =
   });
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+// Prevent multiple instances of Prisma Client in development
