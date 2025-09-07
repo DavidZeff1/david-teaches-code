@@ -2,11 +2,11 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import Image from "next/image";
 import { BookOpen } from "lucide-react";
-import { Prisma } from "@prisma/client";
 
 export default async function CoursesPage() {
   type Course = Awaited<ReturnType<typeof prisma.course.findMany>>[0];
   const courses: Course[] = await prisma.course.findMany();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30 dark:from-slate-950 dark:via-blue-950/30 dark:to-purple-950/30">
       <div className="max-w-7xl mx-auto px-4 py-16">
