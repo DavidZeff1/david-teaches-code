@@ -2,9 +2,7 @@
   "name": "david-teaches-code",
   "version": "0.1.0",
   "private": true,
-  "prisma": {
-    "seed": "tsx prisma/seed.ts"
-  },
+  "prisma": {},
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
