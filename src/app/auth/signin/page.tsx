@@ -1,10 +1,13 @@
 "use client";
 
-import { getProviders, signIn } from "next-auth/react";
+import { getProviders, signIn, ClientSafeProvider } from "next-auth/react";
 import { useEffect, useState } from "react";
 
 export default function SignInPage() {
-  const [providers, setProviders] = useState<any>(null);
+  const [providers, setProviders] = useState<Record<
+    string,
+    ClientSafeProvider
+  > | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -18,9 +21,9 @@ export default function SignInPage() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen gap-4">
       <h1 className="text-2xl font-bold">Sign in to David Teaches Code</h1>
-      {Object.values(providers).map((provider: any) => (
+      {Object.values(providers).map((provider) => (
         <button
-          key={provider.name}
+          key={provider.id}
           onClick={() => signIn(provider.id)}
           className="rounded-lg bg-blue-600 px-5 py-2 text-white hover:bg-blue-700"
         >

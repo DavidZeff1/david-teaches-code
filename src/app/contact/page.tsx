@@ -30,7 +30,7 @@ export default function ContactPage() {
       setStatus("success");
       setFormData({ name: "", email: "", message: "" });
     } catch (err) {
-      setStatus("error");
+      setStatus(err instanceof Error ? "error" : "error");
     } finally {
       setIsSubmitting(false);
       setTimeout(() => setStatus("idle"), 3000);

@@ -1,13 +1,5 @@
 import Link from "next/link";
-import {
-  Github,
-  Linkedin,
-  Mail,
-  Heart,
-  Code,
-  Users,
-  Trophy,
-} from "lucide-react";
+import { Github, Linkedin, Mail, Heart } from "lucide-react";
 import Image from "next/image";
 
 export default function Footer() {
@@ -39,12 +31,6 @@ export default function Footer() {
     { href: "/about", label: "About" },
     { href: "/courses", label: "Courses" },
     { href: "/contact", label: "Contact" },
-  ];
-
-  const stats = [
-    { icon: Users, label: "Students", value: "10K+" },
-    { icon: Code, label: "Lessons", value: "500+" },
-    { icon: Trophy, label: "Success Rate", value: "95%" },
   ];
 
   return (

@@ -7,18 +7,21 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum SubscriptionType {
+  free
+  pro
+  lifetime
+}
+
 model User {
-  id             String     @id @default(cuid())
-  email          String     @unique
+  id             String             @id @default(cuid())
+  email          String             @unique
   name           String?
   image          String?     
   emailVerified  DateTime?   
-  createdAt      DateTime   @default(now())
-  updatedAt      DateTime   @updatedAt
-  subscription   Boolean    @default(false)
-  
-
-  // relations
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  subscription   SubscriptionType   @default(free)   
   progress       Progress[]
   accounts       Account[]
   sessions       Session[]
@@ -64,7 +67,7 @@ model Subsection {
   section   Section   @relation(fields: [sectionId], references: [id])
   sectionId String
   challenge Challenge?
-  progress  Progress[]   // 👈 add this line (opposite relation)
+  progress  Progress[]  
 }
 
 model Progress {

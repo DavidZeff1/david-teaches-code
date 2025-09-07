@@ -5,17 +5,11 @@ import {
   BookOpen,
   Users,
   Trophy,
-  Star,
   ArrowRight,
   CheckCircle,
-  Timer,
   Award,
   Zap,
   Target,
-  ChevronRight,
-  Github,
-  Linkedin,
-  Mail,
 } from "lucide-react";
 
 export default function HomePage() {

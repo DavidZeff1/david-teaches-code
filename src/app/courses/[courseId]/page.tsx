@@ -5,17 +5,34 @@ import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
+// Types derived from your schema (Section with Subsections)
+type SubsectionLite = {
+  id: string;
+  title: string;
+  videoUrl: string | null;
+  text: string | null;
+};
+type SectionLite = {
+  id: string;
+  title: string;
+  order: number;
+  subsections: SubsectionLite[];
+};
+
 export default async function CoursePlayerPage({
   params,
   searchParams,
 }: {
-  params: { courseId: string };
-  searchParams: { lesson?: string };
+  params: Promise<{ courseId: string }>;
+  searchParams: Promise<{ lesson?: string }>;
 }) {
+  const { courseId } = await params;
+  const { lesson } = await searchParams;
+
   const session = await getServerSession(authOptions);
 
   const course = await prisma.course.findUnique({
-    where: { id: params.courseId },
+    where: { id: courseId },
     include: {
       sections: {
         orderBy: { order: "asc" },
@@ -26,24 +43,29 @@ export default async function CoursePlayerPage({
 
   if (!course) notFound();
 
-  // get all lessons
-  const allLessons = course.sections.flatMap((s) => s.subsections);
-  const defaultLessonId = allLessons[0]?.id;
-  const currentLessonId = searchParams.lesson || defaultLessonId || "";
+  // lessons list with type safety
+  const allLessons: SubsectionLite[] = course.sections.flatMap(
+    (s: { subsections: SubsectionLite[] }) => s.subsections as SubsectionLite[]
+  );
 
-  // check subscription
-  const isSubscribed = session?.user?.subscription ?? false;
+  const defaultLessonId = allLessons[0]?.id;
+  const currentLessonId = lesson || defaultLessonId || "";
+
+  // check subscription (enum: "free" | "pro" | "lifetime")
+  const isSubscribed =
+    session?.user?.subscription === "pro" ||
+    session?.user?.subscription === "lifetime";
 
   // determine allowed lessons
-  const allowedSections = isSubscribed
-    ? course.sections
-    : course.sections.slice(0, 1); // only first section free
+  const allowedSections: SectionLite[] = isSubscribed
+    ? (course.sections as SectionLite[])
+    : (course.sections.slice(0, 1) as SectionLite[]);
 
   const allowedLessonIds = allowedSections.flatMap((s) =>
     s.subsections.map((sub) => sub.id)
   );
 
-  // if trying to access a locked lesson → redirect to subscribe
+  // redirect if locked
   if (!allowedLessonIds.includes(currentLessonId)) {
     redirect("/subscribe");
   }

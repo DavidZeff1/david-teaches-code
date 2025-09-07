@@ -2,6 +2,7 @@
 
 import { Check } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { signIn, useSession } from "next-auth/react";
 
 const plans = [
   {
@@ -40,8 +41,13 @@ const plans = [
 
 export default function SubscribePage() {
   const router = useRouter();
+  const { data: session } = useSession();
 
   const handleCheckout = async (priceId: string | null) => {
+    if (!session) {
+      signIn(); // 👈 redirect to sign in page
+      return;
+    }
     if (!priceId) {
       router.push("/courses");
       return;
@@ -51,6 +57,7 @@ export default function SubscribePage() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ priceId }),
+      credentials: "include",
     });
 
     const data = await res.json();

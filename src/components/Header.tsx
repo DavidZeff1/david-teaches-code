@@ -51,9 +51,11 @@ export default function Header() {
           ) : session?.user ? (
             <div className="flex items-center gap-3">
               {session.user.image && (
-                <img
+                <Image
                   src={session.user.image}
                   alt="profile"
+                  width={36}
+                  height={36}
                   className="h-9 w-9 rounded-full border border-gray-200 shadow-sm"
                 />
               )}
