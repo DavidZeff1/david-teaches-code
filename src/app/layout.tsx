@@ -9,6 +9,9 @@ import RouteLoader from "@/components/RouteLoader";
 export const metadata: Metadata = {
   title: "David Teaches Code",
   description: "Learn Java, C, Python and more — from beginner to pro.",
+  icons: {
+    icon: "/icon.png",
+  },
 };
 
 export default function RootLayout({
