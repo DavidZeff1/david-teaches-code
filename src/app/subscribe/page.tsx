@@ -106,7 +106,7 @@ export default function SubscribePage() {
 
             <button
               onClick={() => handleCheckout(plan.priceId)}
-              className="w-full font-semibold py-3 px-6 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
+              className="w-full font-semibold py-3 px-6 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition hover:cursor-pointer"
             >
               {plan.cta}
             </button>
