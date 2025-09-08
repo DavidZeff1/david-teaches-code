@@ -7,15 +7,19 @@ import { useState } from "react";
 export default function Dashboard() {
   const { data: session, status } = useSession();
   const [pending, setPending] = useState(false);
-  const [cancelInfo, setCancelInfo] = useState<null | { cancelAt: number }>(
-    null
-  );
 
   if (status === "loading") return <p className="p-6">Loading...</p>;
   if (!session)
     return <p className="p-6">You must be signed in to view this page.</p>;
 
   const subscription = session.user?.subscription ?? "free";
+
+  // ✅ pull cancelAt from session (populated in NextAuth callback)
+  const cancelAt = session.user?.cancelAt
+    ? new Date(session.user.cancelAt).getTime()
+    : null;
+
+  const endDateText = cancelAt ? new Date(cancelAt).toLocaleDateString() : null;
 
   /** Cancel subscription at period end */
   const cancel = async () => {
@@ -24,10 +28,6 @@ export default function Dashboard() {
       const res = await fetch("/api/unsubscribe", { method: "POST" });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || "Cancel failed");
-
-      if (data.cancelAt) {
-        setCancelInfo({ cancelAt: new Date(data.cancelAt).getTime() });
-      }
 
       window.alert(
         "✅ Your subscription will remain active until the end of the billing period."
@@ -49,8 +49,6 @@ export default function Dashboard() {
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || "Resume failed");
 
-      setCancelInfo(null);
-
       window.alert("🎉 Your subscription has been resumed.");
     } catch (e: unknown) {
       window.alert(
@@ -60,11 +58,6 @@ export default function Dashboard() {
       setPending(false);
     }
   };
-
-  // Text for cancel date if cancellation scheduled
-  const endDateText = cancelInfo?.cancelAt
-    ? new Date(cancelInfo.cancelAt).toLocaleDateString()
-    : null;
 
   return (
     <div className="p-6 max-w-lg mx-auto bg-white dark:bg-slate-900 rounded-xl shadow-md space-y-6">
