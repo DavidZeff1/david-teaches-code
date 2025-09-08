@@ -179,51 +179,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-      {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white relative overflow-hidden">
-        <div className="max-w-4xl mx-auto px-4 md:px-8 text-center relative z-10">
-          <Award className="w-16 h-16 mx-auto mb-8 text-yellow-300" />
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Ready to Start Your Coding Journey?
-          </h2>
-          <p className="text-xl md:text-2xl text-blue-100 mb-8 leading-relaxed">
-            Start with our beginner-friendly courses and build real projects
-            from day one.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <Link
-              href="/courses"
-              className="inline-flex items-center gap-2 bg-white text-blue-600 px-8 py-4 rounded-xl font-bold hover:bg-blue-50 transition-all duration-300 transform hover:scale-105 shadow-xl"
-            >
-              <PlayCircle className="w-5 h-5" />
-              Start Learning Free
-            </Link>
-            <Link
-              href="#featured-courses"
-              className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-8 py-4 rounded-xl font-bold hover:bg-white/30 transition-all duration-300 border border-white/30"
-            >
-              <BookOpen className="w-5 h-5" />
-              Browse All Courses
-            </Link>
-          </div>
-
-          <div className="flex items-center justify-center gap-2 text-blue-200 text-sm">
-            <CheckCircle className="w-4 h-4" />
-            <span>
-              Free courses available • No credit card required • Start
-              immediately
-            </span>
-          </div>
-        </div>
-
-        {/* Background decoration */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-10 left-10 w-32 h-32 bg-white/10 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-10 right-10 w-40 h-40 bg-yellow-300/20 rounded-full blur-3xl"></div>
-        </div>
-      </section>
     </main>
   );
 }
