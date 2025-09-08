@@ -127,7 +127,7 @@ export default function Dashboard() {
           <button
             onClick={cancel}
             disabled={pending}
-            className="w-full rounded-lg bg-red-600 px-4 py-2 text-white font-medium shadow-sm hover:bg-red-700 transition disabled:opacity-50"
+            className="w-full rounded-lg bg-red-600 px-4 py-2 text-white font-medium shadow-sm hover:bg-red-700 transition disabled:opacity-50 hover:cursor-pointer"
           >
             {pending ? "Cancelling..." : "Cancel Subscription"}
           </button>
@@ -137,7 +137,7 @@ export default function Dashboard() {
           <button
             onClick={resume}
             disabled={pending}
-            className="w-full rounded-lg bg-emerald-600 px-4 py-2 text-white font-medium shadow-sm hover:bg-emerald-700 transition disabled:opacity-50"
+            className="w-full rounded-lg bg-emerald-600 px-4 py-2 text-white font-medium shadow-sm hover:bg-emerald-700 transition disabled:opacity-50 hover:cursor-pointer"
           >
             {pending ? "Resuming..." : "Resume Subscription"}
           </button>
