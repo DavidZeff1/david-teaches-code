@@ -14,20 +14,29 @@ enum SubscriptionType {
 }
 
 model User {
-  id             String             @id @default(cuid())
-  email          String             @unique
-  name           String?
-  image          String?     
-  emailVerified  DateTime?   
-  createdAt      DateTime           @default(now())
-  updatedAt      DateTime           @updatedAt
-  subscription   SubscriptionType   @default(free)   
-  stripeCustomerId    String?       @unique
-  stripeSubscriptionId String?      @unique
-  progress       Progress[]
-  accounts       Account[]
-  sessions       Session[]
+  id                   String             @id @default(cuid())
+  email                String             @unique
+  name                 String?
+  image                String?     
+  emailVerified        DateTime?   
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+  subscription         SubscriptionType   @default(free)   
+
+  // Stripe identifiers
+  stripeCustomerId     String?            @unique
+  stripeSubscriptionId String?            @unique
+
+  // Local tracking
+  subscribedAt         DateTime?          // when they subscribed
+  cancelAt             DateTime?          // when cancellation will take effect
+  canceled             Boolean            @default(false)
+
+  progress             Progress[]
+  accounts             Account[]
+  sessions             Session[]
 }
+
 
 
 

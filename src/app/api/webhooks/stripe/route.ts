@@ -20,7 +20,6 @@ export async function POST(req: NextRequest) {
         const session = event.data.object as Stripe.Checkout.Session;
 
         if (session.customer_email) {
-          // Find the subscription if it exists
           let stripeSubscriptionId: string | null = null;
           if (
             session.subscription &&
@@ -36,6 +35,9 @@ export async function POST(req: NextRequest) {
                 session.mode === "subscription" ? "pro" : "lifetime",
               stripeCustomerId: session.customer as string,
               stripeSubscriptionId,
+              subscribedAt: new Date(), // ✅ track start date
+              cancelAt: null, // ✅ reset if they re-subscribe
+              canceled: false,
             },
           });
         }
@@ -53,7 +55,30 @@ export async function POST(req: NextRequest) {
             where: { email: customer.email },
             data: {
               subscription: "free",
-              stripeSubscriptionId: null, // clear it
+              stripeSubscriptionId: null,
+              canceled: false,
+              cancelAt: null,
+            },
+          });
+        }
+        break;
+      }
+
+      case "customer.subscription.updated": {
+        const subscription = event.data.object as Stripe.Subscription;
+        const customer = await stripe.customers.retrieve(
+          subscription.customer as string
+        );
+
+        if (customer && "email" in customer && customer.email) {
+          await prisma.user.update({
+            where: { email: customer.email },
+            data: {
+              // If user scheduled cancellation, store cancelAt date
+              cancelAt: subscription.cancel_at
+                ? new Date(subscription.cancel_at * 1000)
+                : null,
+              canceled: subscription.cancel_at_period_end ?? false,
             },
           });
         }
