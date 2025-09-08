@@ -1,9 +1,9 @@
 // /app/api/subscription/resume/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import Stripe from "stripe";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -19,17 +19,24 @@ export async function POST(req: NextRequest) {
 
   if (!user?.stripeSubscriptionId) {
     return NextResponse.json(
-      { error: "No active subscription found" },
+      { error: "No active subscription" },
       { status: 400 }
     );
   }
 
-  const sub = await stripe.subscriptions.update(user.stripeSubscriptionId, {
-    cancel_at_period_end: false,
+  // Tell Stripe to keep subscription alive
+  const subscription = await stripe.subscriptions.update(
+    user.stripeSubscriptionId,
+    { cancel_at_period_end: false }
+  );
+
+  await prisma.user.update({
+    where: { email: session.user.email },
+    data: {
+      canceled: false,
+      cancelAt: null,
+    },
   });
 
-  return NextResponse.json({
-    success: true,
-    cancelAtPeriodEnd: sub.cancel_at_period_end ?? false,
-  });
+  return NextResponse.json({ success: true });
 }

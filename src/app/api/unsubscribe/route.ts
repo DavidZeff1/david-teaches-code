@@ -1,3 +1,4 @@
+// /app/api/unsubscribe/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -19,36 +20,24 @@ export async function POST(req: NextRequest) {
 
     if (!user?.stripeSubscriptionId) {
       return NextResponse.json(
-        { error: "No active subscription found" },
+        { error: "No active subscription" },
         { status: 400 }
       );
     }
 
-    // 1. Ask Stripe to cancel at end of current billing period
+    // Tell Stripe to cancel at period end
     const subscription = await stripe.subscriptions.update(
       user.stripeSubscriptionId,
-      { cancel_at_period_end: true }
+      {
+        cancel_at_period_end: true,
+      }
     );
 
-    // 2. Immediately reflect this in DB so your UI shows it
-    const cancelAt = subscription.cancel_at
-      ? new Date(subscription.cancel_at * 1000)
-      : null;
-
-    await prisma.user.update({
-      where: { email: session.user.email },
-      data: {
-        canceled: true,
-        cancelAt,
-      },
-    });
-
-    // 3. Respond to client
     return NextResponse.json({
       success: true,
-      message:
-        "Your subscription will remain active until the end of the billing period.",
-      cancelAt,
+      cancelAt: subscription.cancel_at
+        ? new Date(subscription.cancel_at * 1000)
+        : null,
     });
   } catch (err) {
     console.error("Unsubscribe error:", err);

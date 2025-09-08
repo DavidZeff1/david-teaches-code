@@ -7,9 +7,9 @@ import { useState } from "react";
 export default function Dashboard() {
   const { data: session, status } = useSession();
   const [pending, setPending] = useState(false);
-  const [cancelInfo, setCancelInfo] = useState<null | {
-    currentPeriodEnd: number;
-  }>(null);
+  const [cancelInfo, setCancelInfo] = useState<null | { cancelAt: number }>(
+    null
+  );
 
   if (status === "loading") return <p className="p-6">Loading...</p>;
   if (!session)
@@ -17,52 +17,53 @@ export default function Dashboard() {
 
   const subscription = session.user?.subscription ?? "free";
 
+  /** Cancel subscription at period end */
   const cancel = async () => {
     try {
       setPending(true);
       const res = await fetch("/api/unsubscribe", { method: "POST" });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || "Cancel failed");
-      if (data.currentPeriodEnd)
-        setCancelInfo({ currentPeriodEnd: data.currentPeriodEnd });
-      // toast
+
+      if (data.cancelAt) {
+        setCancelInfo({ cancelAt: new Date(data.cancelAt).getTime() });
+      }
+
       window.alert(
-        "Your subscription will end at the end of the billing period. You will keep access until then."
+        "✅ Your subscription will remain active until the end of the billing period."
       );
     } catch (e: unknown) {
-      if (e instanceof Error) {
-        window.alert(e.message);
-      } else {
-        window.alert("An unexpected error occurred.");
-      }
+      window.alert(
+        e instanceof Error ? e.message : "An unexpected error occurred."
+      );
     } finally {
       setPending(false);
     }
   };
 
+  /** Resume subscription */
   const resume = async () => {
     try {
       setPending(true);
       const res = await fetch("/api/subscription/resume", { method: "POST" });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || "Resume failed");
+
       setCancelInfo(null);
-      window.alert(
-        "Your subscription has been resumed. You will continue on Pro."
-      );
+
+      window.alert("🎉 Your subscription has been resumed.");
     } catch (e: unknown) {
-      if (e instanceof Error) {
-        window.alert(e.message);
-      } else {
-        window.alert("Failed to resume. Please try again.");
-      }
+      window.alert(
+        e instanceof Error ? e.message : "Failed to resume subscription."
+      );
     } finally {
       setPending(false);
     }
   };
 
-  const endDateText = cancelInfo?.currentPeriodEnd
-    ? new Date(cancelInfo.currentPeriodEnd).toLocaleDateString()
+  // Text for cancel date if cancellation scheduled
+  const endDateText = cancelInfo?.cancelAt
+    ? new Date(cancelInfo.cancelAt).toLocaleDateString()
     : null;
 
   return (
@@ -70,7 +71,7 @@ export default function Dashboard() {
       {/* Banner if cancellation scheduled */}
       {endDateText && (
         <div className="rounded-lg bg-amber-50 dark:bg-amber-900/40 text-amber-900 dark:text-amber-200 px-4 py-3 text-sm">
-          Your Pro plan is scheduled to end on <b>{endDateText}</b>. You keep
+          ⚠️ Your Pro plan is scheduled to end on <b>{endDateText}</b>. You keep
           access until then.
         </div>
       )}
@@ -89,6 +90,7 @@ export default function Dashboard() {
             {session.user?.name?.charAt(0) ?? "?"}
           </div>
         )}
+
         <div>
           <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">
             {session.user?.name || "User"}
@@ -99,13 +101,13 @@ export default function Dashboard() {
 
           <span
             className={`inline-block mt-1 rounded-full px-3 py-1 text-xs font-semibold shadow-sm capitalize
-            ${
-              subscription === "pro"
-                ? "bg-blue-100 text-blue-700"
-                : subscription === "lifetime"
-                ? "bg-green-100 text-green-700"
-                : "bg-gray-100 text-gray-600"
-            }`}
+              ${
+                subscription === "pro"
+                  ? "bg-blue-100 text-blue-700"
+                  : subscription === "lifetime"
+                  ? "bg-green-100 text-green-700"
+                  : "bg-gray-100 text-gray-600"
+              }`}
           >
             {subscription}
             {endDateText ? ` — cancels on ${endDateText}` : ""}
@@ -114,6 +116,7 @@ export default function Dashboard() {
       </div>
 
       <div className="space-y-3">
+        {/* Free users → upsell */}
         {subscription === "free" && (
           <a
             href="/subscribe"
@@ -123,6 +126,7 @@ export default function Dashboard() {
           </a>
         )}
 
+        {/* Pro users → can cancel or resume */}
         {subscription === "pro" && !endDateText && (
           <button
             onClick={cancel}
@@ -143,6 +147,7 @@ export default function Dashboard() {
           </button>
         )}
 
+        {/* Lifetime users */}
         {subscription === "lifetime" && (
           <div className="text-center text-green-600 dark:text-green-400 font-medium">
             🎉 Lifetime Member
@@ -150,6 +155,7 @@ export default function Dashboard() {
         )}
       </div>
 
+      {/* Sign out */}
       <button
         onClick={() => signOut()}
         className="w-full rounded-lg bg-slate-100 dark:bg-slate-800 px-4 py-2 text-slate-700 dark:text-slate-300 font-medium shadow-sm hover:bg-slate-200 dark:hover:bg-slate-700 transition"
