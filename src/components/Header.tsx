@@ -7,8 +7,17 @@ import Image from "next/image";
 export default function Header() {
   const { data: session, status } = useSession();
 
+  const subscription = session?.user?.subscription || "free";
+
+  // Simple color map for badge
+  const badgeStyles: Record<string, string> = {
+    free: "bg-gray-100 text-gray-600",
+    pro: "bg-blue-100 text-blue-700",
+    lifetime: "bg-green-100 text-green-700",
+  };
+
   return (
-    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md shadow-sm ">
+    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md shadow-sm">
       <div className="container mx-auto flex items-center justify-between px-6 py-4">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
@@ -50,6 +59,7 @@ export default function Header() {
             <span className="text-gray-500">...</span>
           ) : session?.user ? (
             <div className="flex items-center gap-3">
+              {/* Avatar */}
               {session.user.image && (
                 <Image
                   src={session.user.image}
@@ -59,6 +69,15 @@ export default function Header() {
                   className="h-9 w-9 rounded-full border border-gray-200 shadow-sm"
                 />
               )}
+
+              {/* Subscription Badge */}
+              <span
+                className={`px-3 py-1 text-xs font-semibold rounded-full capitalize shadow-sm ${badgeStyles[subscription]}`}
+              >
+                {subscription}
+              </span>
+
+              {/* Sign out */}
               <button
                 onClick={() => signOut()}
                 className="rounded-full bg-red-50 px-5 py-2 text-sm font-medium text-red-600 shadow-sm hover:bg-red-100 hover:shadow transition hover:cursor-pointer"

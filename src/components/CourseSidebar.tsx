@@ -72,7 +72,7 @@ export default function CourseSidebar({
                   {/* Section Header */}
                   <button
                     onClick={() => toggleSection(section.id)}
-                    className={`w-full flex justify-between items-center p-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition`}
+                    className={`w-full flex justify-between items-center p-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition hover:cursor-pointer`}
                   >
                     <span className="font-medium text-slate-800 dark:text-slate-200">
                       {section.title}

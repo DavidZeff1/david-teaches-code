@@ -1,15 +1,61 @@
+"use client";
+
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import Image from "next/image";
-import { BookOpen } from "lucide-react";
+import { BookOpen, CheckCircle2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useState } from "react";
 
-export default async function CoursesPage() {
+export default function CoursesPage({
+  searchParams,
+}: {
+  searchParams?: { session_id?: string };
+}) {
+  const [showSuccess, setShowSuccess] = useState(
+    Boolean(searchParams?.session_id)
+  );
+
+  useEffect(() => {
+    if (showSuccess) {
+      const timer = setTimeout(() => setShowSuccess(false), 4000); // auto-hide after 4s
+      return () => clearTimeout(timer);
+    }
+  }, [showSuccess]);
+
+  // Prisma must be queried in a server component
+  // So we’ll fetch data in a child Server Component
+  return <CoursesList showSuccess={showSuccess} />;
+}
+
+/* ---------------------------
+   Server Component Child
+---------------------------- */
+async function CoursesList({ showSuccess }: { showSuccess: boolean }) {
   type Course = Awaited<ReturnType<typeof prisma.course.findMany>>[0];
   const courses: Course[] = await prisma.course.findMany();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30 dark:from-slate-950 dark:via-blue-950/30 dark:to-purple-950/30">
       <div className="max-w-7xl mx-auto px-4 py-16">
+        {/* ✅ Animated Success Toast */}
+        <AnimatePresence>
+          {showSuccess && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.4 }}
+              className="mb-8 flex items-center gap-3 rounded-xl bg-green-100 dark:bg-green-900 px-6 py-4 shadow-md"
+            >
+              <CheckCircle2 className="h-6 w-6 text-green-600 dark:text-green-300" />
+              <p className="text-green-700 dark:text-green-200 font-medium">
+                Payment successful! You now have full access 🎉
+              </p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Header */}
         <div className="flex items-center gap-2 mb-8">
           <BookOpen className="w-6 h-6 text-blue-500" />
