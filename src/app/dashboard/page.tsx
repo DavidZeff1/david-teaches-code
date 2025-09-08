@@ -49,7 +49,9 @@ export default function Dashboard() {
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || "Resume failed");
 
+      // instantly remove banner
       window.alert("🎉 Your subscription has been resumed.");
+      window.location.reload(); // or update local UI state if you want no reload
     } catch (e: unknown) {
       window.alert(
         e instanceof Error ? e.message : "Failed to resume subscription."
