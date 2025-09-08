@@ -32,6 +32,7 @@ export default function Dashboard() {
       window.alert(
         "✅ Your subscription will remain active until the end of the billing period."
       );
+      window.location.reload();
     } catch (e: unknown) {
       window.alert(
         e instanceof Error ? e.message : "An unexpected error occurred."
