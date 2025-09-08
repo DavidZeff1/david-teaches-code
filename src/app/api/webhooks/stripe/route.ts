@@ -20,16 +20,28 @@ export async function POST(req: NextRequest) {
         const session = event.data.object as Stripe.Checkout.Session;
 
         if (session.customer_email) {
+          // Find the subscription if it exists
+          let stripeSubscriptionId: string | null = null;
+          if (
+            session.subscription &&
+            typeof session.subscription === "string"
+          ) {
+            stripeSubscriptionId = session.subscription;
+          }
+
           await prisma.user.update({
             where: { email: session.customer_email },
             data: {
               subscription:
                 session.mode === "subscription" ? "pro" : "lifetime",
+              stripeCustomerId: session.customer as string,
+              stripeSubscriptionId,
             },
           });
         }
         break;
       }
+
       case "customer.subscription.deleted": {
         const subscription = event.data.object as Stripe.Subscription;
         const customer = await stripe.customers.retrieve(
@@ -39,7 +51,10 @@ export async function POST(req: NextRequest) {
         if (customer && "email" in customer && customer.email) {
           await prisma.user.update({
             where: { email: customer.email },
-            data: { subscription: "free" },
+            data: {
+              subscription: "free",
+              stripeSubscriptionId: null, // clear it
+            },
           });
         }
         break;

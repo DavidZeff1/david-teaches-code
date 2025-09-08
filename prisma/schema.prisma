@@ -22,10 +22,13 @@ model User {
   createdAt      DateTime           @default(now())
   updatedAt      DateTime           @updatedAt
   subscription   SubscriptionType   @default(free)   
+  stripeCustomerId    String?       @unique
+  stripeSubscriptionId String?      @unique
   progress       Progress[]
   accounts       Account[]
   sessions       Session[]
 }
+
 
 
 
