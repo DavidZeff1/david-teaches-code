@@ -22,7 +22,9 @@ declare module "next-auth" {
     email: string;
     name?: string | null;
     image?: string | null;
-    subscription: SubscriptionType;
+    subscription: "free" | "pro" | "lifetime";
+    cancelAt?: Date | null;
+    canceled?: boolean;
   }
 
   interface Session {
@@ -31,7 +33,9 @@ declare module "next-auth" {
       email: string;
       name?: string | null;
       image?: string | null;
-      subscription: SubscriptionType;
+      subscription: "free" | "pro" | "lifetime";
+      cancelAt?: Date | null;
+      canceled?: boolean;
     };
   }
 }

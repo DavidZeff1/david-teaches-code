@@ -54,6 +54,8 @@ export const authOptions: NextAuthOptions = {
       if (session.user) {
         session.user.id = user.id;
         session.user.subscription = user.subscription;
+        session.user.cancelAt = user.cancelAt;
+        session.user.canceled = user.canceled;
       }
       return session;
     },
