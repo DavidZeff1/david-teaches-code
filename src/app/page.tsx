@@ -6,8 +6,6 @@ import {
   Users,
   Trophy,
   ArrowRight,
-  CheckCircle,
-  Award,
   Zap,
   Target,
 } from "lucide-react";

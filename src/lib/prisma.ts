@@ -1,12 +1,12 @@
 import { PrismaClient } from "@prisma/client";
 
 declare global {
-  // eslint-disable-next-line no-var
-  var __prisma: PrismaClient | undefined;
+  // ensures __prisma is available globally without var + disable
+  let __prisma: PrismaClient | undefined;
 }
 
-const globalForPrisma = globalThis as unknown as {
-  __prisma: PrismaClient | undefined;
+const globalForPrisma = globalThis as typeof globalThis & {
+  __prisma?: PrismaClient;
 };
 
 export const prisma =

@@ -29,8 +29,12 @@ export default function Dashboard() {
       window.alert(
         "Your subscription will end at the end of the billing period. You will keep access until then."
       );
-    } catch (e: any) {
-      window.alert(e.message || "Failed to cancel. Please try again.");
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        window.alert(e.message);
+      } else {
+        window.alert("An unexpected error occurred.");
+      }
     } finally {
       setPending(false);
     }
@@ -46,8 +50,12 @@ export default function Dashboard() {
       window.alert(
         "Your subscription has been resumed. You will continue on Pro."
       );
-    } catch (e: any) {
-      window.alert(e.message || "Failed to resume. Please try again.");
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        window.alert(e.message);
+      } else {
+        window.alert("Failed to resume. Please try again.");
+      }
     } finally {
       setPending(false);
     }
