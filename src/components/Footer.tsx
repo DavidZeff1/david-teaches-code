@@ -52,15 +52,6 @@ export default function Footer() {
                   height={500}
                   className="h-12 w-auto"
                 />
-                <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white dark:border-slate-900"></div>
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100">
-                  David Teaches Code
-                </h3>
-                <p className="text-sm text-slate-500 dark:text-slate-400">
-                  Learn • Build • Grow
-                </p>
               </div>
             </div>
 
