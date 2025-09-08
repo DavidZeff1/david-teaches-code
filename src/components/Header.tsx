@@ -71,11 +71,13 @@ export default function Header() {
               )}
 
               {/* Subscription Badge */}
-              <span
-                className={`px-3 py-1 text-xs font-semibold rounded-full capitalize shadow-sm ${badgeStyles[subscription]}`}
-              >
-                {subscription}
-              </span>
+              <Link href="/dashboard">
+                <span
+                  className={`px-3 py-1 text-xs font-semibold rounded-full capitalize shadow-sm ${badgeStyles[subscription]}`}
+                >
+                  {subscription}
+                </span>
+              </Link>
 
               {/* Sign out */}
               <button
